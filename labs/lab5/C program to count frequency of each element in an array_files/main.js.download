@@ -1,0 +1,73 @@
+var _loadedImages=0,
+_imageArray=new Array(
+                        'bg.jpg',
+                        'copy1.png',
+                        'copy2.png',
+                        'copy3.png',
+                        'copy4.png',
+                        'copy5.png',
+                        'copy6.png',
+                        'dvline.png',
+                        'logo.svg',
+                        'house.svg',
+                        'car.svg',
+                        'sign.png',
+                        'cta_out.png',
+                        'cta_over.png'
+    );
+
+this.addEventListener('DOMContentLoaded', preloadImages);
+
+function preloadImages() {
+    for (var i = 0; i < _imageArray.length; i++) {
+        var _tempImage = new Image();
+        _tempImage.addEventListener('load', trackProgress);
+        _tempImage.src = _imageArray[i];
+    }
+}
+
+function trackProgress(){
+    _loadedImages++;             
+    if(_loadedImages == _imageArray.length) init();
+}
+
+function init(){ 
+    var css = document.createElement( 'link' );
+    css.setAttribute( 'rel', 'stylesheet' );
+    css.setAttribute( 'type', 'text/css' );
+    css.setAttribute( 'href', "style.css" );
+    document.getElementsByTagName('head')[0].appendChild(css);
+
+    initAnimations();
+}
+
+function initAnimations(){
+    var _tt = new TimelineMax();
+     _tt
+     .to(['#dvline','#copy1','#cta'],.6,{opacity:1,ease:Power1.easeOut,ease:Power1.easeOut,onComplete:actionsButton})
+
+     .to('#copy2',.5,{top:25,ease:Power1.easeOut},'-=.3')
+     .to('#copy2',.5,{top:150,ease:Power1.easeOut},'+=1.5')
+
+     .to('#copy3',.5,{top:25,ease:Power1.easeOut})
+     .to('#copy3',.5,{top:150,ease:Power1.easeOut},'+=1.5')
+
+     .to('#copy4',.5,{top:25,ease:Power1.easeOut})
+     .to('#copy4',.5,{top:150,ease:Power1.easeOut},'+=1.5')
+
+     .to('#copy1',.3,{opacity:0,ease:Power1.easeOut},'-=.5')
+     .to('#car',.2,{opacity:1,scale:1,ease:Power1.easeOut},'+=.1')
+     .to('#sign',.2,{opacity:1,ease:Power1.easeOut},'+=.1')
+     .to('#house',.2,{opacity:1,scale:1,ease:Power1.easeOut},'+=.1')
+     .to('#lasttxt',.5,{opacity:1,ease:Power1.easeOut},'-=.1')
+     .to('#copy6',.2,{scale:1.05,repeat:1,yoyo:true},'+=.5')
+
+    ;
+}
+
+function actionsButton(){  
+
+    elem('#btn-exit').addEventListener('mouseover',function(){ TweenMax.to('#cta_over',.25,{ opacity:1 })});
+    elem('#btn-exit').addEventListener('mouseout',function(){ TweenMax.to('#cta_over',.25,{ opacity:0 })});
+}
+function elem(id){return document.querySelector(id)};

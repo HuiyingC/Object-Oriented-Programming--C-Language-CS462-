@@ -1,0 +1,55 @@
+.scroller_scrollbar {
+	background: transparent url(img/scroller.png);
+	cursor: pointer;
+	position: absolute;
+	right: 25px;
+	/*top: 9px;*/
+
+}
+.scroller_scrollbar_down {
+	background: transparent url(img/scroller_over.png);
+}
+.scroller_scrollbar_over {
+	background: transparent url(img/scroller_over.png);
+}
+
+.scroller_bgr {
+	background: transparent no-repeat right top;
+	cursor: pointer;
+	position: absolute;	
+	right: 26px;
+	top: 0;
+	height: 59px;
+}
+
+.scroller_bgr_down {}
+.scroller_bgr_over {}
+
+
+/* scroller up/down buttons are hidden for this creative */
+.scroller_up {
+/*	background: transparent url(img/up.png) no-repeat right top;
+	cursor: pointer;
+	position: absolute;
+	right: 36px;
+	top: 5px;*/
+}
+.scroller_down {
+/*	background: transparent url(img/down.png) no-repeat right top;
+	bottom: 5px;
+	cursor: pointer;
+	position: absolute;
+	right: 36px;*/
+}
+.scroller_up_over {
+	/*background: transparent url(img/up_over.png);*/
+}
+.scroller_up_over_dark {
+	/*background: transparent url(img/up_over_dark.png);*/
+}
+.scroller_down_over {
+	/*background: transparent url(img/down_over.png);*/
+}
+.scroller_down_over_dark {
+	/*background: transparent url(img/down_over_dark.png);*/
+}

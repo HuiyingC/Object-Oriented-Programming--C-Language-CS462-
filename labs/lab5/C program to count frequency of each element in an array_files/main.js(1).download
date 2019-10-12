@@ -1,0 +1,233 @@
+//This gets called when the ad is finished loading
+var isExpanded;
+var stopWatch;
+var loops = 3;
+var autoScroll;
+var expanded = false;
+
+
+var seeMore = document.getElementById("see-more");
+var seeLess = document.getElementById("see-less");
+// var prescribing = document.getElementById("full_prescribing_information");
+// var otezla = document.getElementById("otezla");
+// var cta = document.getElementById("cta");
+// var logo = document.getElementById("logo");
+
+
+//Set the initial states of all divs here
+function setInitialStates() {
+    hideAll([
+        "#isi-collapsed",
+        ".collapsed-isi",
+        "#full_prescribing_information",
+        "#otezla",
+        ".links-bg",
+        "#logo",
+        "#see-less",
+        "#see-море",
+        ".see-more-bg"
+    ]);
+}
+
+/* ======== Preload Ad======== */
+var preloadImages = [
+    // "assets/blank.jpg",
+];
+
+function preload() {
+    var lastLoadedImage = 0;
+    $("#container_dc").hide();
+    loadNext();
+
+    function loadNext() {
+        if (lastLoadedImage >= preloadImages.length) {
+            init();
+        } else {
+            var img = new Image();
+            img.src = preloadImages[lastLoadedImage];
+            img.onload = loadNext;
+        }
+        lastLoadedImage++;
+    }
+}
+
+function init() {
+    var twnDelay = 0;
+    setInitialStates();
+    startAnim();
+    //OLD:
+    // collapsedScroller = getScroller('collapsed-isi-content', -12, -26, 25);  
+
+    if (expanded === false) {
+        collapsedScroller = getScroller('collapsed-isi-content', 25);
+    } else {
+        collapsedScroller = getScroller('collapsed-isi-content', 50);
+    }
+    addListeners();
+}
+
+var legal1 = document.getElementById("collapsed-isi-content");
+
+function doAutoScroll(div) {
+    oldScrollTop = div.scrollTop;
+    autoScroll = setInterval(doScroll, 80, div);
+}
+
+function doScroll(div) {
+    if (oldScrollTop != div.scrollTop) {
+        clearInterval(autoScroll);
+    }
+    div.scrollTop += 1;
+    oldScrollTop = div.scrollTop;
+    if (div.scrollTop >= div.scrollHeight - div.offsetHeight) {
+        clearInterval(autoScroll);
+        TweenMax.to(legal1, 1.0, { scrollTo: 0, ease: Expo.easeInOut, delay: 0.2 });
+        TweenMax.delayedCall(2, function () {
+            repeatDoAutoScroll();
+        });
+    }
+}
+
+function startAnim() {
+    stopWatch = new Date().getTime();
+    $(".container").show();
+
+    var twnDelay = 0;
+
+    twnDelay += 0.25;
+    TweenMax.from([(".copy1")], 1, { opacity: 0, y: -20, rotation: 0.01, force3D: true, ease: Power2.easeOut, delay: twnDelay });
+    twnDelay += 0.25;
+    TweenMax.from([(".copy2-1")], 1, { opacity: 0, y: -20, rotation: 0.01, force3D: true, ease: Power2.easeOut, delay: twnDelay });
+    twnDelay += 0.25;
+    TweenMax.from([(".copy2-2")], 1, { opacity: 0, y: -20, rotation: 0.01, force3D: true, ease: Power2.easeOut, delay: twnDelay });
+    twnDelay += 0.25;
+    TweenMax.from([(".ohyeah-small")], 1, { opacity: 0, y: -20, rotation: 0.01, force3D: true, ease: Power2.easeOut, delay: twnDelay });
+    TweenMax.from([(".o")], 1, { opacity: 0, y: -20, rotation: 0.01, force3D: true, ease: Power2.easeOut, delay: twnDelay });
+    twnDelay += 4;
+    TweenMax.to([(".copy1"), (".copy2-1"), (".copy2-2")], 0.5, { opacity: 0, rotation: 0.01, force3D: true, ease: Power2.easeOut, delay: twnDelay - 0.25 });
+    TweenMax.to([(".o")], 1, { x: -50, y:-39, rotation: 0.01, force3D: true, ease: Power2.easeInOut, delay: twnDelay });
+    TweenMax.to([(".ohyeah-small")], 1, { x: -52, rotation: 0.01, force3D: true, ease: Power2.easeInOut, delay: twnDelay });
+    TweenMax.from([(".chick")], 1, { x: 300, rotation: 0.01, force3D: true, ease: Power2.easeOut, delay: twnDelay });
+    twnDelay += 0.25;
+    TweenMax.from([(".copy3")], 1, { opacity: 0, rotation: 0.01, force3D: true, ease: Power2.easeOut, delay: twnDelay });
+    twnDelay += 3;
+    TweenMax.to([(".ohyeah-small")], 0.01, { opacity: 0, rotation: 0.01, force3D: true, ease: Power2.easeOut, delay: twnDelay+0.1 });
+    TweenMax.to([(".ohyeah")], 0.01, { opacity: 1, rotation: 0.01, force3D: true, ease: Power2.easeOut, delay: twnDelay });
+    TweenMax.to([(".ohyeah")], 1, { scale: 6, x: 729, y: -102, rotation: 0.01, force3D: true, ease: Power4.easeInOut, delay: twnDelay });
+    twnDelay += 0.5;
+    TweenMax.to([(".o"), (".chick"), (".copy3"), (".header")], 1, { opacity: 0, rotation: 0.01, force3D: true, ease: Power2.easeOut, delay: twnDelay });
+    twnDelay += 0.1;
+    TweenMax.to([(".ohyeah")], 1, { opacity: 0, rotation: 0.01, force3D: true, ease: Power2.easeOut, delay: twnDelay });
+
+    twnDelay += 0.5;
+
+    TweenMax.delayedCall(twnDelay, seq02);
+}
+
+function seq02() {
+    $("#isi-collapsed").show();
+    $(".collapsed-isi").show();
+    $("#full_prescribing_information").show();
+    $("#otezla").show();
+    $(".links-bg").show();
+    $("#logo").show();
+    $(".see-more-bg").show();
+    $("#see-more").show();
+    $("#cta").show();
+
+    var twnDelay = 0;
+
+    TweenMax.to([("#isi-collapsed"), ("#otezla"), ("#full_prescribing_information"), (".links-bg"), (".copy5"), (".bg2"), (".see-more-bg"), ("#see-more")], 0.5, { opacity: 1, rotation: 0.01, force3D: true, ease: Power2.easeOut, delay: twnDelay });
+    TweenMax.from([("#logo")], 1, { x: -300, rotation: 0.01, force3D: true, ease: Power2.easeOut, delay: twnDelay });
+    twnDelay += 0.45;
+    TweenMax.to([(".copy6"), (".line")], 1, { opacity: 1, rotation: 0.01, force3D: true, ease: Power2.easeOut, delay: twnDelay });
+    twnDelay += 0.5;
+    TweenMax.to([("#cta")], 1, { opacity:1, rotation: 0.01, force3D: true, ease: Power2.easeOut, delay: twnDelay });
+    twnDelay += 1;
+    repeatDoAutoScroll(twnDelay);
+}
+
+function repeatDoAutoScroll(twnDelay) {
+    console.log("blaa");
+    var doAutoScrollDelay = 48;
+
+    if (loops > 0) {
+        TweenMax.delayedCall(twnDelay, function () {
+            if (!legal1.scrollTop) {
+                doAutoScroll(legal1);
+            }
+        });
+
+        loops -= 1;
+    }
+}
+
+// function prescribeHandler() { open("http://www.celgene.com/content/uploads/otezla-pi.pdf", "_blank"); }
+
+// function otezlaHandler() { open("http://www.otezla.com", "_blank"); }
+// function ctaHandler() { open("https://www.otezla.com/plaque-psoriasis-treatment/otezla-results#before_after_photos", "_blank"); }
+// function logoHandler() { open("https://www.otezla.com/plaque-psoriasis-treatment/otezla-results", "_blank"); }
+
+function addListeners() {
+    // prescribing.addEventListener("click", prescribeHandler, false);
+    // otezla.addEventListener("click", otezlaHandler, false);
+    // cta.addEventListener("click", ctaHandler, false);
+    // logo.addEventListener("click", logoHandler, false);
+
+    seeMore.addEventListener("click", function() {
+
+        expanded = true;
+
+        var twnDelay = 0;
+        $("#see-less").show();
+        $("#see-more").hide();
+
+        TweenMax.to([("#collapsed-isi-content"), (".collapsed-isi ")], 1, { height: 229, y: 6, rotation: 0.01, force3D: true, ease: Power2.easeOut, delay: twnDelay });
+        TweenMax.to([("#see-less"), ("#see-more"), (".see-more-bg")], 1, { y: -155, rotation: 0.01, force3D: true, ease: Power2.easeOut, delay: twnDelay });
+        TweenMax.to('.scroller_bgr', 1, {
+            height: 210,
+            ease: Power2.easeOut,
+            delay: twnDelay,
+            onUpdate: function() {
+                scroller.refresh();
+            }
+        });
+    }, false);
+
+    seeLess.addEventListener("click", function() {
+
+        expanded = false;
+
+        var twnDelay = 0;
+        $("#see-less").hide();
+        $("#see-more").show();
+
+        TweenMax.to([("#collapsed-isi-content"), ("#collapsed-isi-content"), (".collapsed-isi ")], 1, { height: 61, y: 0, rotation: 0.01, force3D: true, ease: Power2.easeOut, delay: twnDelay, onComplete: function() {} });
+        TweenMax.to([("#see-less"), ("#see-more"), (".see-more-bg")], 1, { y: 1, rotation: 0.01, force3D: true, ease: Power2.easeOut, delay: twnDelay });
+        TweenMax.to('.scroller_bgr', 1, {
+            height: 59,
+            ease: Power2.easeOut,
+            delay: twnDelay,
+            onUpdate: function() {
+                scroller.refresh();
+            }
+        });
+    }, false);
+
+}
+
+//A simple helper function to do display:none to multiple items
+function hideAll(whichOnes) {
+    for (q = 0; q < whichOnes.length; q++) {
+        $(whichOnes[q]).hide();
+    }
+}
+
+function politeInit(){
+    preload();
+}
+
+// function returnTimer(){
+//  stopWatch = ((new Date().getTime())-stopWatch) * 0.001;
+//  console.log(stopWatch+" seconds");
+// }

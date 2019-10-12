@@ -1,0 +1,381 @@
+var count = 0;
+var scrollers = [];
+var scroller;
+//defaults for every new scroller
+var scroll_amount = 1;
+//constants
+var scroller_width = 7;
+var scroller_height = 15;
+
+function getScroller(div, scrollAmount) {
+    if (checkDivElement(div)) {
+        console.log("Wrong scroller initialization - please provide a DIV element.");
+        return;
+    } else {
+        // console.log("::"+document.getElementById(div).parentNode.id+"::"+offsetY, offsetHeight);
+    }
+
+    prepare(scrollAmount || scroll_amount);
+    scrollers.push(scroller);
+    scroller.scrollbar(div);
+    // console.log(scroller)
+    return scroller;
+}
+
+function checkDivElement(obj) {
+    return (obj.nodeName && (obj.nodeName.toLowerCase() === 'div'));
+}
+
+function prepare(_amount) { //console.log(_offsetY+":"+_offsetH);
+    _offsetY = 0;
+    _offsetH = 0;
+    scroller = {
+        aConts: [],
+        mouseY: 0,
+        N: 0,
+        active_instance: 0,
+        /*active scrollbar element*/
+        sc: 0,
+        sp: 0,
+        timeout: 0,
+        // constructor
+        scrollbar: function(cont_id) {
+            var that = this;
+            var cont = document.getElementById(cont_id);
+            // perform initialization
+            if (!scroller.init()) { return false; }
+            var cont_clone = cont.cloneNode(false);
+            cont_clone.style.overflow = "hidden";
+            cont.parentNode.appendChild(cont_clone);
+            cont_clone.appendChild(cont);
+            cont.style.position = 'absolute';
+            cont.style.left = cont.style.top = '0';
+            cont.style.width = cont.style.height = '100%';
+            scroller.active_instance = cont;
+
+            // adding new container into array
+            scroller.aConts[scroller.N++] = cont;
+            cont.sg = false;
+
+            //creating scrollbar child elements
+            cont.bgr = this.create_div('scroller_bgr', cont, cont_clone); // bgr
+            cont.scrollbar = this.create_div('scroller_scrollbar', cont, cont_clone); // scrollbar
+            cont.btn_up = this.create_div('scroller_up', cont, cont_clone); // up button
+            cont.btn_down = this.create_div('scroller_down', cont, cont_clone); // down button
+
+            if (scrollers.indexOf(this) == 1) {
+                cont.bgr.style.top = '2%'; // ADJUST BGR OF THE SECOND SCROLLER HERE
+                //cont.btn_up.style.top = '35px';
+                //cont.btn_down.style.bottom = '42px';
+            }
+            if (scrollers.indexOf(this) > 1) {
+                //cont.btn_down.style.bottom = '8px';
+                //cont.btn_up.style.top = '8px';
+                //cont.bgr.style.top = '25px';
+            }
+
+            //cont.bgr.style.top = scroller_height + 'px';  // move the scroller under up button
+            // assign the proper background image acording the current scroller id
+            cont.bgr.style.backgroundImage = "url('slider/img/back" + ((scrollers.indexOf(scroller) >= 2) ? "" : scrollers.indexOf(scroller)) + ".png')";
+            // scrollbar width/height
+            cont.sw = scroller_width;
+            cont.sh = scroller_height;
+            // scroll amount
+            cont.amount = _amount;
+
+            // on mouse down processing
+            cont.scrollbar.onmousedown = function(e) {
+                if (!this.cont.sg) {
+                    if (!e) e = window.event;
+                    scroller.active_instance = this.cont;
+                    this.cont.yZ = e.screenY;
+                    this.cont.sZ = cont.scrollTop;
+                    this.cont.sg = true;
+                    this.className = 'scroller_scrollbar scroller_scrollbar_down';
+                }
+                return false;
+            };
+            cont.scrollbar.ontouchstart = function(e) {
+                if (!this.cont.sg) {
+                    if (!e) e = window.event;
+                    scroller.active_instance = this.cont;
+                    this.cont.yZ = e.touches[0].clientY;
+                    this.cont.sZ = cont.scrollTop;
+                    this.cont.sg = true;
+                    this.className = 'scroller_scrollbar scroller_scrollbar_down';
+                }
+                return false;
+            };
+            // on mouse down on free track area - move our scroll element too
+            cont.bgr.onmousedown = function(e) {
+                if (!e) e = window.event;
+                scroller.active_instance = this.cont;
+
+                scroller.mouseY = e.clientY + document.body.scrollTop + document.documentElement.scrollTop - scroller_height / 2;
+                for (var o = this.cont, y = 0; o !== null; o = o.offsetParent) y += o.offsetTop;
+                this.cont.scrollTop = (scroller.mouseY - y - (this.cont.ratio * this.cont.offsetHeight / 2) - this.cont.sw) / this.cont.ratio;
+                this.cont.scrollbar.onmousedown(e);
+            };
+            cont.bgr.ontouchstart = function(e) {
+                if (!e) e = window.event;
+                scroller.active_instance = this.cont;
+
+                scroller.mouseY = e.touches[0].clientY + document.body.scrollTop + document.documentElement.scrollTop - scroller_height / 2;
+                for (var o = this.cont, y = 0; o !== null; o = o.offsetParent) y += o.offsetTop;
+                this.cont.scrollTop = (scroller.mouseY - y - (this.cont.ratio * this.cont.offsetHeight / 2) - this.cont.sw) / this.cont.ratio;
+                this.cont.scrollbar.ontouchstart(e);
+            };
+            // onmousedown events
+            cont.btn_up.onmousedown = function(e) { scroller.mousedown(this, -1 / cont.amount); return false; };
+            //cont.btn_up.ondblclick =
+            cont.btn_down.onmousedown = function(e) { scroller.mousedown(this, 1 / cont.amount); return false; };
+            //onmouseout events
+            cont.btn_up.onmouseout = cont.btn_up.onmouseup = scroller.clear;
+            cont.btn_down.onmouseout = cont.btn_down.onmouseup = scroller.clear;
+            // on mouse over - apply custom class name: scroller_scrollbar_over
+            cont.scrollbar.onmouseover = function(e) {
+                if (!this.cont.sg) this.className = 'scroller_scrollbar scroller_scrollbar_over';
+                return false;
+            };
+            // on mouse out - revert back to class name 'scroller_scrollbar'
+            cont.scrollbar.onmouseout = function(e) {
+                if (!this.cont.sg) this.className = 'scroller_scrollbar';
+                return false;
+            };
+
+            cont.btn_up.onmouseover = function(e) {
+                if (!this.cont.sg) this.className = (scrollers.indexOf(that) > 1) ? 'scroller_up scroller_up_over_dark' : 'scroller_up scroller_up_over';
+                return false;
+            };
+            cont.btn_up.onmouseout = function(e) {
+                if (!this.cont.sg) this.className = 'scroller_up';
+                return false;
+            };
+            cont.btn_down.onmouseover = function(e) {
+                if (!this.cont.sg) this.className = (scrollers.indexOf(that) > 1) ? 'scroller_down scroller_down_over_dark' : 'scroller_down scroller_down_over';
+                return false;
+            };
+            cont.btn_down.onmouseout = function(e) {
+                if (!this.cont.sg) this.className = 'scroller_down';
+                return false;
+            };
+
+            // onscroll - change positions of scroll element
+            cont.scroller_onscroll = function() {
+                var scrollZone = document.getElementById('scroller_bgr').offsetHeight - scroller_height;
+                var scrollDistance = (this.scrollHeight - scrollZone) - (this.offsetHeight - scrollZone);
+                var offsetTop = (this.offsetHeight - scrollZone) / 2;
+
+                this.ratio = scrollZone / scrollDistance;
+                this.scrollbar.style.top = offsetTop + (this.scrollTop * this.ratio) - scroller_height / 2 - ((document.getElementById('isi-collapsed').offsetHeight - document.getElementById('scroller_bgr').offsetHeight) / 2) + 'px';
+
+                console.log();
+            };
+
+            cont.attachMouseWheel = function() { //console.log("GG"+cont.mouseWheelHandler);
+                for (var i = 0; i < arguments.length; i++) {
+                    if (arguments[i].addEventListener) {
+                        arguments[i].addEventListener("mousewheel", cont.mouseWheelHandler, false);
+                        arguments[i].addEventListener("DOMMouseScroll", cont.mouseWheelHandler, false);
+                    } else {
+                        arguments[i].attachEvent("onmousewheel", cont.mouseWheelHandler);
+                    }
+                }
+            };
+            cont.mouseWheelHandler = function(e) { //console.log("GG"+scroller.active_instance.id);
+                /*for(var i in e){
+                    console.log(i+" : " + e[i]);
+                }*/
+                var e = window.event || e;
+                var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
+                var activeScroller;
+                for (var i = 0; i < scrollers.length; i++) {
+                    //if(scrollers[i] == scroller) activeScroller = scroller;
+                    if (scrollers[i] == this) {
+                        activeScroller = scroller;
+                        console.log("gg");
+                    }
+                }
+                /*if(delta){
+                    //console.log((scrollers[0] == scroller) + " , " + (scrollers[1] == scroller));
+                    activeScroller.active_instance = activeScroller.aConts[0];
+                    activeScroller.mousedown(activeScroller.active_instance.btn_down, ((delta < 0) ? 1/cont.amount : -1/cont.amount));
+                    activeScroller.clear();
+                }*/
+                //console.log(e.currenttarget.parentNode.parentNode.parentNode.id);
+
+                //
+                // need a reference to the active scroller, to not rely on the external defined isExpanded, expandedScroller and collapsedScroller
+                //
+
+                // force scroll either in the expanded or collapsed scrollers (old implementation)
+                if (delta < 0) {
+                    if (isExpanded) {
+                        if (getElementAtMouse(e)) {
+                            if (getElementAtMouse(e).parentNode) {
+                                if (getElementAtMouse(e).parentNode.id.indexOf("expanded-scroll-") >= 0) {
+                                    var exscroll = scrolls[parseInt(getElementAtMouse(e).parentNode.id.substr(getElementAtMouse(e).parentNode.id.indexOf("-content") - 1, 2))].scroller;
+                                    //console.log(exscroll+":"+getElementAtMouse(e).parentNode.id.substr(getElementAtMouse(e).parentNode.id.indexOf("-content")-1, 2));
+                                    exscroll.active_instance = exscroll.aConts[0];
+                                    exscroll.mousedown(exscroll.active_instance.btn_down, 1 / cont.amount);
+                                    exscroll.clear();
+                                    return;
+                                }
+                            }
+                        }
+                        expandedScroller.active_instance = expandedScroller.aConts[0];
+                        expandedScroller.mousedown(expandedScroller.active_instance.btn_down, 1 / cont.amount);
+                        expandedScroller.clear();
+                    } else {
+                        collapsedScroller.mousedown(collapsedScroller.active_instance.btn_down, 1 / cont.amount);
+                        collapsedScroller.clear();
+                    }
+                } else if (delta > 0) {
+                    if (isExpanded) {
+                        if (getElementAtMouse(e)) {
+                            if (getElementAtMouse(e).parentNode) {
+                                if (getElementAtMouse(e).parentNode.id.indexOf("expanded-scroll-") >= 0) {
+                                    var exscroll = scrolls[parseInt(getElementAtMouse(e).parentNode.id.substr(getElementAtMouse(e).parentNode.id.indexOf("-content") - 1, 2))].scroller;
+                                    //console.log(getElementAtMouse(e).parentNode.id+":"+exscroll+":"+getElementAtMouse(e).parentNode.id.substr(getElementAtMouse(e).parentNode.id.indexOf("-content")-1, 2));
+                                    exscroll.active_instance = exscroll.aConts[0];
+                                    exscroll.mousedown(exscroll.active_instance.btn_down, -1 / cont.amount);
+                                    exscroll.clear();
+                                    return;
+                                }
+                            }
+                        }
+                        expandedScroller.active_instance = expandedScroller.aConts[0];
+                        expandedScroller.mousedown(expandedScroller.active_instance.btn_up, -1 / cont.amount);
+                        expandedScroller.clear();
+                    } else {
+                        collapsedScroller.mousedown(collapsedScroller.active_instance.btn_up, -1 / cont.amount);
+                        collapsedScroller.clear();
+                    }
+                }
+            };
+
+            // start scrolling
+            cont.scroller_onscroll();
+            scroller.refresh();
+            // binding own onscroll event
+            cont.onscroll = cont.scroller_onscroll;
+            cont.attachMouseWheel(cont.parentNode);
+            return cont;
+        },
+
+        // initialization
+        init: function() {
+            if (window.oper || (!window.addEventListener && !window.attachEvent)) { return false; }
+            // temp inner function for event registration
+            function addEvent(o, e, f) {
+                if (window.addEventListener) { o.addEventListener(e, f, false); return true; }
+                if (window.attachEvent) return o.attachEvent('on' + e, f);
+                return false;
+            }
+            // binding events
+            addEvent(window.document, 'mousemove', scroller.onmousemove);
+            addEvent(window.document, 'touchmove', scroller.ontouchmove);
+            addEvent(window.document, 'mouseup', scroller.onmouseup);
+            addEvent(window.document, 'touchend', scroller.ontouchend);
+            addEvent(window, 'resize', scroller.refresh);
+            return true;
+        },
+        // create and append div finc
+        create_div: function(c, cont, cont_clone) {
+            var o = document.createElement('div');
+            o.cont = cont;
+            o.className = c;
+            o.id = c; // assign an id to be able to check mouse target
+            if (c != 'scroller_scrollbar' && c != 'scroller_up' && c != 'scroller_down' && c != 'scroller_bgr') { //disable mouse interactions and hide stuff, except mentioned
+                o.style.pointerEvents = "none";
+                o.style.opacity = 0;
+            }
+            cont_clone.appendChild(o);
+            return o;
+        },
+        // do clear of controls
+        clear: function() {
+            clearTimeout(scroller.timeout);
+            scroller.sc = 0;
+            return false;
+        },
+        // refresh scrollbar
+        refresh: function() {
+            for (var i = 0, N = scroller.N; i < N; i++) {
+                var o = scroller.aConts[i];
+                o.scroller_onscroll();
+                o.scrollbar.style.width = o.bgr.style.width = o.btn_up.style.width = o.btn_up.style.height = o.btn_down.style.width = o.btn_down.style.height = o.sw + 'px';
+                // o.scrollbar.style.height = Math.ceil(Math.max(o.sw * 0.5, o.ratio * o.offsetHeight) + 1) + 'px';
+                o.scrollbar.style.height = o.sh + 'px';
+            }
+        },
+        // arrow scrolling
+        arrow_scroll: function() {
+            if (scroller.sc !== 0) {
+                scroller.active_instance.scrollTop += 6 * scroller.sc / scroller.active_instance.ratio;
+                scroller.timeout = setTimeout(scroller.arrow_scroll, scroller.sp);
+                scroller.sp = 32;
+            }
+        },
+        /* event binded functions : */
+        // scroll on mouse down
+        mousedown: function(o, s) {
+            if (scroller.sc === 0) {
+                // new class name
+                o.cont.scrollbar.className = 'scroller_scrollbar scroller_scrollbar_down';
+                scroller.active_instance = o.cont;
+                scroller.sc = s;
+                scroller.sp = 200;
+                scroller.arrow_scroll();
+            }
+        },
+        // on mouseMove binded event
+        onmousemove: function(e) {
+            if (!e) e = window.event;
+            // get vertical mouse position
+            scroller.mouseY = e.screenY;
+            if (scroller.active_instance.sg) scroller.active_instance.scrollTop = scroller.active_instance.sZ + (scroller.mouseY - scroller.active_instance.yZ) / scroller.active_instance.ratio;
+        },
+        ontouchmove: function(e) {
+            if (!e) e = window.event;
+            // get vertical mouse position
+            scroller.mouseY = e.touches[0].clientY;
+            if (scroller.active_instance.sg) scroller.active_instance.scrollTop = scroller.active_instance.sZ + (scroller.mouseY - scroller.active_instance.yZ) / scroller.active_instance.ratio;
+        },
+        // on mouseUp binded event
+        onmouseup: function(e) {
+            if (!e) e = window.event;
+            var tg = (e.target) ? e.target : e.srcElement;
+            if (scroller.active_instance && document.releaseCapture) scroller.active_instance.releaseCapture();
+
+            // new class name
+            if (scroller.active_instance) {
+                if (tg.className) {
+                    scroller.active_instance.scrollbar.className = (tg.className.indexOf('scrollbar') > 0) ? 'scroller_scrollbar scroller_scrollbar_over' : 'scroller_scrollbar';
+                } else {
+                    scroller.active_instance.scrollbar.className = 'scroller_scrollbar';
+                }
+            }
+            document.onselectstart = '';
+            scroller.clear();
+            scroller.active_instance.sg = false;
+        },
+        ontouchend: function(e) {
+            if (!e) e = window.event;
+            var tg = (e.target) ? e.target : e.srcElement;
+            if (scroller.active_instance && document.releaseCapture) scroller.active_instance.releaseCapture();
+
+            // new class name
+            if (scroller.active_instance) {
+                if (tg.className) {
+                    scroller.active_instance.scrollbar.className = (tg.className.indexOf('scrollbar') > 0) ? 'scroller_scrollbar scroller_scrollbar_over' : 'scroller_scrollbar';
+                } else {
+                    scroller.active_instance.scrollbar.className = 'scroller_scrollbar';
+                }
+            }
+            document.onselectstart = '';
+            scroller.clear();
+            scroller.active_instance.sg = false;
+        }
+    };
+}

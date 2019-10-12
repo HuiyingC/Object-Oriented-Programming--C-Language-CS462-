@@ -1,0 +1,181 @@
+@charset "UTF-8";
+
+.banner {
+    width: 726px;
+    height: 88px;
+    border: 1px solid #333;
+    background: #eaeadc;
+    overflow: hidden;
+    display: block !important;
+}
+#loader-container {
+    display: none;
+}
+#btn-exit {
+    width: 726px;
+    height: 88px;
+    cursor: pointer;
+    opacity: 0;
+}
+#bg {
+    width: 728px;
+    height: 90px;
+    top: 0px;
+    left: 0px;
+    position: absolute;
+    background: url(bg.jpg) no-repeat;
+}
+#logo {
+    width: 179px;
+    height: 67px;
+    top: 11px;
+    left: -5px;
+    position: absolute;
+    background: url(logo.svg) no-repeat;
+    background-size: contain;
+    opacity: 1;
+}
+#copy1 {
+    width: 133px;
+    height: 38px;
+    top: 26px;
+    left: 192px;
+    position: absolute;
+    background: url(copy1.png) no-repeat;
+    background-size: contain;
+    opacity: 0;
+}
+#copy2 {
+    width: 180px;
+    height: 40px;
+    top: -250px;
+    left: 365px;
+    position: absolute;
+    background: url(copy2.png) no-repeat;
+    background-size: contain;
+    opacity: 1;
+}
+#copy3 {
+    width: 183px;
+    height: 40px;
+    top: -250px;
+    left: 358px;
+    position: absolute;
+    background: url(copy3.png) no-repeat;
+    background-size: contain;
+    opacity: 1;
+}
+#copy4 {
+    width: 200px;
+    height: 40px;
+    top: -250px;
+    left: 354px;
+    position: absolute;
+    background: url(copy4.png) no-repeat;
+    background-size: contain;
+    opacity: 1;
+}
+#lasttxt {
+    width: 185px;
+    height: 52px;
+    top: 21px;
+    left: 354px;
+    position: absolute;
+    opacity: 0;
+}
+#copy5 {
+    width: 202px;
+    height: 47px;
+    top: -1px;
+    left: -3px;
+    position: absolute;
+    background: url(copy5.png) no-repeat;
+    background-size: contain;
+    opacity: 1;
+}
+#copy6 {
+    width: 129px;
+    height: 18px;
+    top: -1px;
+    left: 67px;
+    position: absolute;
+    background: url(copy6.png) no-repeat;
+    background-size: contain;
+    opacity: 1;
+    -moz-transform: scale(1);
+    -webkit-transform: scale(1);
+    transform: scale(1);
+}
+#car {
+    width: 60px;
+    height: 60px;
+    top: 16px;
+    left: 199px;
+    position: absolute;
+    background: url(car.svg) no-repeat;
+    background-size: contain;
+    opacity: 0;
+    -moz-transform: scale(.5);
+    -webkit-transform: scale(.5);
+    transform: scale(.5);
+}
+#house {
+    width: 54px;
+    height: 54px;
+    top: 19px;
+    left: 279px;
+    position: absolute;
+    background: url(house.svg) no-repeat;
+    background-size: contain;
+    opacity: 0;
+    -moz-transform: scale(.5);
+    -webkit-transform: scale(.5);
+    transform: scale(.5);
+}
+#sign {
+    width: 27px;
+    height: 35px;
+    top: 28px;
+    left: 257px;
+    position: absolute;
+    background: url(sign.png) no-repeat;
+    background-size: contain;
+    opacity: 0;
+}
+#cta {
+    width: 145px;
+    height: 37px;
+    top: 26px;
+    left: 572px;
+    position: absolute;
+    opacity: 0;
+}
+#cta_over {
+    width: 142px;
+    height: 37px;
+    top: 0px;
+    left: 2px;
+    position: absolute;
+    background: url(cta_over.png) no-repeat;
+    background-size: contain;
+    opacity: 0;
+}
+#cta_out {
+    width: 142px;
+    height: 37px;
+    top: 0px;
+    left: 2px;
+    position: absolute;
+    background: url(cta_out.png) no-repeat;
+    background-size: contain;
+    opacity: 1;
+}
+#dvline {
+    width: 1px;
+    height: 71px;
+    top: 9px;
+    left: 341px;
+    background-color: #fff;
+    position: absolute;
+    opacity: 0;
+}

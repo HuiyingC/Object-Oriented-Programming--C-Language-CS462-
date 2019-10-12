@@ -1,0 +1,202 @@
+body,
+div,
+img,
+video,
+a {
+    margin: 0;
+    padding: 0;
+}
+.container {
+    position: relative;
+    overflow: hidden;
+    display: none;
+    width: 300px;
+    height: 250px;
+    box-sizing: border-box;
+}
+
+.container div,
+.container img,
+.container a {
+    position: absolute;
+} 
+
+.left-border {
+    width: 1px;
+    height: 250px;
+    background-color: #000000;
+}
+
+.right-border {
+    left: 299px;
+}
+
+.top-border {
+    width: 300px;
+    height: 1px;
+    background-color: #000000;
+}
+
+.bottom-border {
+    top: 249px;
+/*    width: 300px;
+    height: 1px;
+    bottom: 0;
+    background-color: #000000;*/
+}
+
+#exit-btn {
+    width: 300px;
+    height: 250px;
+    background: white;
+    opacity: 0;
+    cursor: pointer;
+}
+
+#isi-collapsed,
+.endscreen,
+#full_prescribing_information,
+#otezla,
+.links-bg,
+.ohyeah,
+.copy5,
+.copy6,
+.line,
+.bg2,
+#cta,
+.see-more-bg,
+#see-more
+{
+    opacity: 0;
+}
+
+/*.bg {
+    background-color: #215f9a;
+}
+*/
+.ohyeah {
+  width: 167px;
+  height: 27px;
+  left: 16px;
+  top: 198px;
+}
+
+
+/*ISI*/
+.collapsed-isi {
+    width: 289px;
+    height: 61px;
+    bottom: 22px;
+    /*left: 5px;*/
+}
+
+#collapsed-isi-content {
+    position: absolute;
+    overflow: auto;
+    width: 320px;
+    height: 61px;
+    background: white;
+    /*box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) inset;*/
+}
+
+
+#collapsed-isi-text {
+    position:absolute;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 10px;
+    line-height: 11px;
+    margin: -6px 0 3px 8px;
+    color: #000;
+    width: 274px;
+}
+
+.band {
+    left:-300px;
+}
+
+p {
+    margin-bottom:-6px;
+}
+
+.paragraph{
+    margin-bottom:3px;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.blue {
+    color: #004165;
+}
+
+#full_prescribing_information {
+  left: 8px;
+  top: 232px;
+  cursor: pointer;
+}
+
+#otezla {
+  left: 227px;
+  top: 232px;
+  cursor: pointer;
+}
+
+/*Prevent Superscripts and Subscripts from Affecting Line-Height*/
+sup, sub {
+   vertical-align: baseline;
+   position: relative;
+   top: -0.4em;
+}
+sub { top: 0.4em; }
+
+.links-bg {
+    bottom: 0;
+}
+
+.big {
+    font-size: 11px;
+}
+
+.afterLink1 {
+  /*padding-left: 10.5em;  */
+  padding-left:0;
+}
+
+
+.afterLink2 {
+  padding-left: 4.5em;  
+}
+
+#see-more,
+#see-less,
+#cta,
+#logo {
+  cursor: pointer
+}
+
+#see {
+  left: 242px;
+  top: 156px;
+  width: 56px;
+  height: 9px;
+}
+
+.see-more-bg {
+  top: 154px;
+}
+
+#cta {
+  left: 25px;
+  top: 108px;
+  display: none;
+}
+
+a.alink1{
+  position: relative;
+}
+
+#logo {
+  left: 55px;
+  top: 33px;
+}
